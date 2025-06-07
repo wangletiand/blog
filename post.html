@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>文章详情</title></head>
+<body><div id="article"></div><h3>评论</h3><div id="comments"></div>
+<form id="commentForm"><textarea name="content" placeholder="写下你的评论..."></textarea><button type="submit">提交评论</button></form>
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+async function loadArticle() {
+  const res = await fetch(`/api/posts/${id}`);
+  const post = await res.json();
+  document.getElementById('article').innerHTML = `<h1>${post.title}</h1><p>${post.content}</p>`;
+}
+async function loadComments() {
+  const res = await fetch(`/api/posts/${id}/comments`);
+  const comments = await res.json();
+  const c = document.getElementById('comments');
+  c.innerHTML = comments.map(com => `<p>${com.content}</p>`).join('');
+}
+document.getElementById('commentForm').onsubmit = async e => {
+  e.preventDefault();
+  const content = e.target.content.value;
+  await fetch(`/api/posts/${id}/comments`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ content })
+  });
+  e.target.reset();
+  loadComments();
+};
+loadArticle(); loadComments();
+</script></body></html>

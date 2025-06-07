@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>发布文章</title></head>
+<body><h2>发布文章</h2><form id="postForm"><input name="title" placeholder="标题" required><br><textarea name="summary" placeholder="摘要" required></textarea><br><textarea name="content" placeholder="正文" required></textarea><br><button type="submit">发布</button></form>
+<script>
+document.getElementById('postForm').onsubmit = async e => {
+  e.preventDefault();
+  const { title, summary, content } = e.target;
+  await fetch('/api/posts', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ title: title.value, summary: summary.value, content: content.value })
+  });
+  alert('发布成功');
+};
+</script></body></html>
